@@ -116,7 +116,7 @@ impl FromStr for Token {
             "rad" | "radians" => Ok(Token::UnaryOp(UnaryOp::RAD)),
             "deg" | "degrees" => Ok(Token::UnaryOp(UnaryOp::DEG)),
             "e" => Ok(Token::Constant(Number::Float(std::f64::consts::E))),
-            "pi" | "π" => Ok(Token::Constant(Number::Float(std::f64::consts::PI))),
+            "pi"=> Ok(Token::Constant(Number::Float(std::f64::consts::PI))),
             "tau" => Ok(Token::Constant(Number::Float(std::f64::consts::TAU))),
             _ => Err(()),
         }
