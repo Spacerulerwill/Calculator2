@@ -1,7 +1,7 @@
-use std::iter::Peekable;
+use std::{iter::Peekable, str::FromStr};
 use std::str::Chars;
 
-use crate::calculator::tokens::{Token, BinaryOp, UnaryOp, Parenthesis, Number, FloatType, IntType, KEYWORDS};
+use crate::calculator::tokens::{Token, BinaryOp, UnaryOp, Parenthesis, Number, FloatType, IntType};
 
 #[derive(Debug)]
 pub enum TokeniserError {
@@ -174,8 +174,8 @@ fn tokenise_letters(current_char: char, tokens: &mut Vec<Token>, chars: &mut Pee
         }
     };
     
-    match KEYWORDS.get(&keyword) {
-        Some(token) => {
+    match Token::from_str(&keyword) {
+        Ok(token) => {
             if let Some(c) = tokens.last().clone() {
                 match c {
                     Token::Constant(_) | Token::Number(_) | Token::Parenthesis(Parenthesis::CLOSED) => {
@@ -185,10 +185,10 @@ fn tokenise_letters(current_char: char, tokens: &mut Vec<Token>, chars: &mut Pee
 
                 }
             }                  
-            tokens.push(*token);
+            tokens.push(token);
             Ok(())
         },
-        None => return Err(TokeniserError::InvalidFunctionOrConstant(keyword)),
+        Err(_) => return Err(TokeniserError::InvalidFunctionOrConstant(keyword)),
     }
 }
 

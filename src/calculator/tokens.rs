@@ -1,5 +1,5 @@
-use phf::phf_map;
 use std::fmt;
+use std::str::FromStr;
 
 // The types that the calculator uses for integer and floating point operations
 pub type FloatType = f64;
@@ -88,33 +88,40 @@ impl fmt::Display for UnaryOp {
     }
 }
 
-// Map of keywords to their associated token
-pub static KEYWORDS: phf::Map<&'static str, Token> = phf_map! {
-    "abs" => Token::UnaryOp(UnaryOp::ABS),
-    "sin" => Token::UnaryOp(UnaryOp::SIN),
-    "cos" => Token::UnaryOp(UnaryOp::COS),
-    "tan" => Token::UnaryOp(UnaryOp::TAN),
-    "asin" => Token::UnaryOp(UnaryOp::ARCSIN),
-    "acos" => Token::UnaryOp(UnaryOp::ARCCOS),
-    "atan" => Token::UnaryOp(UnaryOp::ARCTAN),
-    "cosec" => Token::UnaryOp(UnaryOp::COSEC),
-    "sec" => Token::UnaryOp(UnaryOp::SEC),
-    "cot" => Token::UnaryOp(UnaryOp::COT),
-    "sinh" => Token::UnaryOp(UnaryOp::SINH),
-    "cosh" => Token::UnaryOp(UnaryOp::COSH),
-    "tanh" => Token::UnaryOp(UnaryOp::TANH),
-    "cosech" => Token::UnaryOp(UnaryOp::COSECH),
-    "sech" => Token::UnaryOp(UnaryOp::SECH),
-    "coth" => Token::UnaryOp(UnaryOp::COTH),
-    "asinh" => Token::UnaryOp(UnaryOp::ARSINH),
-    "acosh" => Token::UnaryOp(UnaryOp::ARCOSH),
-    "atanh" => Token::UnaryOp(UnaryOp::ARTANH),
-    "rad" => Token::UnaryOp(UnaryOp::RAD),
-    "deg" => Token::UnaryOp(UnaryOp::DEG),
-    "e" => Token::Constant(Number::Float(std::f64::consts::E)),
-    "pi" => Token::Constant(Number::Float(std::f64::consts::PI)),
-    "tau" => Token::Constant(Number::Float(std::f64::consts::TAU))
-};
+// Implement FromStr trait for the enum
+impl FromStr for Token {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "abs" => Ok(Token::UnaryOp(UnaryOp::ABS)),
+            "sin" => Ok(Token::UnaryOp(UnaryOp::SIN)),
+            "cos" => Ok(Token::UnaryOp(UnaryOp::COS)),
+            "tan" => Ok(Token::UnaryOp(UnaryOp::TAN)),
+            "asin" | "arcsin" => Ok(Token::UnaryOp(UnaryOp::ARCSIN)),
+            "acos" | "arccos" => Ok(Token::UnaryOp(UnaryOp::ARCCOS)),
+            "atan" | "arctan" => Ok(Token::UnaryOp(UnaryOp::ARCTAN)),
+            "csc" | "cosec" => Ok(Token::UnaryOp(UnaryOp::COSEC)),
+            "sec" => Ok(Token::UnaryOp(UnaryOp::SEC)),
+            "cot" => Ok(Token::UnaryOp(UnaryOp::COT)),
+            "sinh" => Ok(Token::UnaryOp(UnaryOp::SINH)),
+            "cosh" => Ok(Token::UnaryOp(UnaryOp::COSH)),
+            "tanh" => Ok(Token::UnaryOp(UnaryOp::TANH)),
+            "csch" | "cosech" => Ok(Token::UnaryOp(UnaryOp::COSECH)),
+            "sech"  => Ok(Token::UnaryOp(UnaryOp::SECH)),
+            "coth" => Ok(Token::UnaryOp(UnaryOp::COTH)),
+            "asinh" | "arsinh" => Ok(Token::UnaryOp(UnaryOp::ARSINH)),
+            "acosh" => Ok(Token::UnaryOp(UnaryOp::ARCOSH)),
+            "atanh" => Ok(Token::UnaryOp(UnaryOp::ARTANH)),
+            "rad" | "radians" => Ok(Token::UnaryOp(UnaryOp::RAD)),
+            "deg" | "degrees" => Ok(Token::UnaryOp(UnaryOp::DEG)),
+            "e" => Ok(Token::Constant(Number::Float(std::f64::consts::E))),
+            "pi" | "π" => Ok(Token::Constant(Number::Float(std::f64::consts::PI))),
+            "tau" => Ok(Token::Constant(Number::Float(std::f64::consts::TAU))),
+            _ => Err(()),
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub enum Parenthesis {
